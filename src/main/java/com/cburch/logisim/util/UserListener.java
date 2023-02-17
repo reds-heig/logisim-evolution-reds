@@ -11,5 +11,5 @@ package com.cburch.logisim.util;
  * @since 2.11.0.t
  */
 public interface UserListener {
-	public void userChanged();
+  public void userChanged();
 }

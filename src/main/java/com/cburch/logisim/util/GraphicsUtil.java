@@ -41,8 +41,8 @@ public final class GraphicsUtil {
   public static final int DATA_MULTI_WIDTH = 4;
 
   /* Used for the integrity highlight */
-	public static final Color GREEN_DARK = new Color(0, 100, 0);
-	public static final Color RED = new Color(200, 0, 0);
+  public static final Color GREEN_DARK = new Color(0, 100, 0);
+  public static final Color RED = new Color(200, 0, 0);
 
   private GraphicsUtil() {
     throw new IllegalStateException("Utility class. No instantiation allowed.");

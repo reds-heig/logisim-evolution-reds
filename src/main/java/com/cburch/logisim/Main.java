@@ -84,20 +84,20 @@ public class Main {
   /* Added by REDS */
   public static final int FINAL_REVISION = Integer.MAX_VALUE / 4;
   public static final LogisimVersion VERSION = new LogisimVersion(3, 9, 0, "dev");
-	public static final String VERSION_NAME = VERSION.toString();
-	public static final int COPYRIGHT_YEAR = 2014;
+  public static final String VERSION_NAME = VERSION.toString();
+  public static final int COPYRIGHT_YEAR = 2014;
 
-	public static boolean ANALYZE = true;
-	/**
-	 * This flag enables auto-updates. It is true by default, so that users
-	 * normally check for updates at startup. On the other hand, this might  be
-	 * annoying for developers, therefore we let them disable it from the
-	 * command line with the '-noupdates' option.
-	 */
-	public static boolean UPDATE = true;
+  public static boolean ANALYZE = true;
+  /**
+   * This flag enables auto-updates. It is true by default, so that users
+   * normally check for updates at startup. On the other hand, this might  be
+   * annoying for developers, therefore we let them disable it from the
+   * command line with the '-noupdates' option.
+   */
+  public static boolean UPDATE = true;
 
-	/**
-	 * URL for the automatic updater
-	 */
-	public static final String UPDATE_URL = "http://reds-data.heig-vd.ch/logisim-evolution/logisim_evolution_version.xml";
+  /**
+   * URL for the automatic updater
+   */
+  public static final String UPDATE_URL = "http://reds-data.heig-vd.ch/logisim-evolution/logisim_evolution_version.xml";
 }

@@ -86,11 +86,11 @@ public interface Component extends Location.At {
     // no-op implementation
   }
 
-	TrackerTreeCircuitNode getTrackerExplorerCircuitNode(TrackerTreeModel model, Circuit circuit, CircuitState state);
+  TrackerTreeCircuitNode getTrackerExplorerCircuitNode(TrackerTreeModel model, Circuit circuit, CircuitState state);
 
-	TrackerTreeCompNode getTrackerExplorerCompNode(TrackerTreeCircuitNode parent);
+  TrackerTreeCompNode getTrackerExplorerCompNode(TrackerTreeCircuitNode parent);
 
-	boolean hasValidIntegrity();
+  boolean hasValidIntegrity();
 
-	boolean hasValidOwner(Tracker tracker);
+  boolean hasValidOwner(Tracker tracker);
 }

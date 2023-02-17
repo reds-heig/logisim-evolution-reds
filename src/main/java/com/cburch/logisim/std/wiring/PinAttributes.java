@@ -42,22 +42,7 @@ class PinAttributes extends ProbeAttributes {
   public static final Attribute<String> ATTR_DUMMY = new DummyAttr("type");
   public static PinAttributes instance = new PinAttributes();
 
-  private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(
-          StdAttr.FACING,
-          Pin.ATTR_TYPE,
-          StdAttr.WIDTH,
-          Pin.ATTR_TRISTATE,
-          Pin.ATTR_PULL,
-          StdAttr.LABEL,
-          StdAttr.LABEL_FONT,
-          RadixOption.ATTRIBUTE,
-          PROBEAPPEARANCE,
-          StdAttr.OWNER,
-          StdAttr.DATE,
-          StdAttr.VERSION, StdAttr.UUID,
-          StdAttr.INTEGRITY,
-          ATTR_DUMMY);
+  private List<Attribute<?>> myAttributes;
 
   BitWidth width = BitWidth.ONE;
   boolean threeState = false; // true;

@@ -16,111 +16,111 @@ import com.cburch.logisim.prefs.AppPreferences;
  */
 public class User {
 
-	/**
-	 * Remove all users from the user list.
-	 */
-	public static void empty() {
-		users.clear();
-		users.add(UNKNOWN_USER);
-	}
+  /**
+   * Remove all users from the user list.
+   */
+  public static void empty() {
+    users.clear();
+    users.add(UNKNOWN_USER);
+  }
 
-	/**
-	 * Find a user is the existing user list by his name.
-	 * 
-	 * @param name
-	 * @return The user if found, else <code>null</code>
-	 */
-	public static User findByName(String name) {
-		name = name.toLowerCase();
-		Iterator<User> it = users.iterator();
-		while (it.hasNext()) {
-			User user = it.next();
-			if (user.getName().equals(name)) {
-				return user;
-			}
-		}
-		return null;
-	}
+  /**
+   * Find a user is the existing user list by his name.
+   * 
+   * @param name
+   * @return The user if found, else <code>null</code>
+   */
+  public static User findByName(String name) {
+    name = name.toLowerCase();
+    Iterator<User> it = users.iterator();
+    while (it.hasNext()) {
+      User user = it.next();
+      if (user.getName().equals(name)) {
+        return user;
+      }
+    }
+    return null;
+  }
 
-	/**
-	 * Get an array of the existing users
-	 * 
-	 * @return Array of existing users
-	 */
-	public static User[] getAvailableUsers() {
-		return (User[]) users.toArray(new User[users.size()]);
-	}
+  /**
+   * Get an array of the existing users
+   * 
+   * @return Array of existing users
+   */
+  public static User[] getAvailableUsers() {
+    return (User[]) users.toArray(new User[users.size()]);
+  }
 
-	/**
-	 * Get the default active user from the preferences.
-	 * 
-	 * @return The default user
-	 */
-	public static User getDefaultActive() {
-		return findByName(AppPreferences.USER_DEFAULT.get());
-	}
+  /**
+   * Get the default active user from the preferences.
+   * 
+   * @return The default user
+   */
+  public static User getDefaultActive() {
+    return findByName(AppPreferences.USER_DEFAULT.get());
+  }
 
-	/**
-	 * User factory. User is automatically added to the user list. It is not
-	 * possible to add the default <i>unknown</i> user.
-	 * 
-	 * @param name
-	 *            User name
-	 * @return The newly created user
-	 */
-	public static User newUser(String name) {
-		if (name.equals(UserManager.UNKNOWN_USER_NAME))
-			return UNKNOWN_USER;
-		User usr = new User(name);
-		users.add(usr);
-		return usr;
-	}
+  /**
+   * User factory. User is automatically added to the user list. It is not
+   * possible to add the default <i>unknown</i> user.
+   * 
+   * @param name
+   *          User name
+   * @return The newly created user
+   */
+  public static User newUser(String name) {
+    if (name.equals(UserManager.UNKNOWN_USER_NAME))
+      return UNKNOWN_USER;
+    User usr = new User(name);
+    users.add(usr);
+    return usr;
+  }
 
-	/**
-	 * Set the default active user in the preferences.
-	 * 
-	 * @param newDefautActivelUser
-	 */
-	public static void setDefaultActive(User newDefautActivelUser) {
-		AppPreferences.USER_DEFAULT.set(newDefautActivelUser.getName());
-	}
+  /**
+   * Set the default active user in the preferences.
+   * 
+   * @param newDefautActivelUser
+   */
+  public static void setDefaultActive(User newDefautActivelUser) {
+    AppPreferences.USER_DEFAULT.set(newDefautActivelUser.getName());
+  }
 
-	private String name;
+  private String name;
 
-	private static final ArrayList<User> users = new ArrayList<User>();
+  private static final ArrayList<User> users = new ArrayList<User>();
 
-	public static final User UNKNOWN_USER = new User(
-			UserManager.UNKNOWN_USER_NAME);
+  public static final User UNKNOWN_USER = new User(
+      UserManager.UNKNOWN_USER_NAME);
 
-	/**
-	 * User constructor.
-	 * 
-	 * @param name
-	 *            : user name, will be put to lower case.
-	 */
-	private User(String name) {
-		this.name = name.toLowerCase();
-	}
+  /**
+   * User constructor.
+   * 
+   * @param name
+   *          : user name, will be put to lower case.
+   */
+  private User(String name) {
+    this.name = name.toLowerCase();
+  }
 
-	/**
-	 * Get the user name
-	 * 
-	 * @return name
-	 */
-	public String getName() {
-		return name;
-	}
+  /**
+   * Get the user name
+   * 
+   * @return name
+   */
+  public String getName() {
+    return name;
+  }
 
-	/**
-	 * Removes the user from the existing user list.
-	 */
-	public void remove() {
-		Iterator<User> it = users.iterator();
-		while (it.hasNext()) {
-			User user = it.next();
-			if (user.equals(this)) {
-				it.remove();
-			}
-		}
-	}
+  /**
+   * Removes the user from the existing user list.
+   */
+  public void remove() {
+    Iterator<User> it = users.iterator();
+    while (it.hasNext()) {
+      User user = it.next();
+      if (user.equals(this)) {
+        it.remove();
+      }
+    }
+  }
 }

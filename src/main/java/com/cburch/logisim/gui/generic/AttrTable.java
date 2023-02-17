@@ -21,6 +21,7 @@ import com.cburch.logisim.util.JInputDialog;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -62,11 +63,11 @@ public class AttrTable extends JPanel implements LocaleListener {
   private final Window parent;
   private final JLabel title;
   private final JTable table;
-	private final JLabel integrity;
+  private final JLabel integrity;
   private final TableModelAdapter tableModel;
   private final CellEditor editor = new CellEditor();
   private boolean titleEnabled;
-	private boolean integrityEnabled;
+  private boolean integrityEnabled;
 
   public AttrTable(Window parent) {
     super(new BorderLayout());
@@ -77,10 +78,10 @@ public class AttrTable extends JPanel implements LocaleListener {
     title.setHorizontalAlignment(SwingConstants.CENTER);
     title.setVerticalAlignment(SwingConstants.CENTER);
 
-		integrityEnabled = true;
-		integrity = new TitleLabel();
-		integrity.setHorizontalAlignment(SwingConstants.CENTER);
-		integrity.setVerticalAlignment(SwingConstants.CENTER);
+    integrityEnabled = true;
+    integrity = new TitleLabel();
+    integrity.setHorizontalAlignment(SwingConstants.CENTER);
+    integrity.setVerticalAlignment(SwingConstants.CENTER);
 
     tableModel = new TableModelAdapter(parent, NULL_ATTR_MODEL);
     table = new JTable(tableModel);
@@ -98,7 +99,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     final var tableScroll = new JScrollPane(table);
 
     propPanel.add(title, BorderLayout.PAGE_START);
-		propPanel.add(integrity, BorderLayout.PAGE_END);
+    propPanel.add(integrity, BorderLayout.PAGE_END);
     propPanel.add(tableScroll, BorderLayout.CENTER);
 
     this.add(propPanel, BorderLayout.CENTER);
@@ -116,7 +117,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     if (editor != null) table.getCellEditor().cancelCellEditing();
     tableModel.setAttrTableModel(value == null ? NULL_ATTR_MODEL : value);
     updateTitle();
-		updateIntegrity();
+    updateIntegrity();
   }
 
   public boolean isTitleEnabled() {
@@ -126,13 +127,13 @@ public class AttrTable extends JPanel implements LocaleListener {
   public void setTitleEnabled(boolean value) {
     titleEnabled = value;
     updateTitle();
-		updateIntegrity();
+    updateIntegrity();
   }
 
   @Override
   public void localeChanged() {
     updateTitle();
-		updateIntegrity();
+    updateIntegrity();
     tableModel.fireTableChanged();
   }
 
@@ -155,33 +156,33 @@ public class AttrTable extends JPanel implements LocaleListener {
   * attributes and integrity hash is made from other attributes The result of
   * matching (or not) is shown to the user
   */
-	private void updateIntegrity() {
+  private void updateIntegrity() {
 
-		if (integrityEnabled) {
-			String text;
-			try {
+    if (integrityEnabled) {
+      String text;
+      try {
 
-				if (((AbstractAttributeSet) ((AttributeSetTableModel) tableModel.attrModel)
-						.getAttributeSet()).hasValidIntegrity()) {
-					integrity.setBackground(GraphicsUtil.GREEN_DARK);
-					text = "Integrity check succeeded";
-				} else {
-					integrity.setBackground(GraphicsUtil.RED);
-					text = "Integrity check failed";
-				}
+        if (((AbstractAttributeSet) ((AttributeSetTableModel) tableModel.attrModel)
+            .getAttributeSet()).hasValidIntegrity()) {
+          integrity.setBackground(GraphicsUtil.GREEN_DARK);
+          text = "Integrity check succeeded";
+        } else {
+          integrity.setBackground(GraphicsUtil.RED);
+          text = "Integrity check failed";
+        }
 
-				integrity.setForeground(Color.WHITE);
-				integrity.setOpaque(true);
-				integrity.setText(text);
-				integrity.setVisible(true);
+        integrity.setForeground(Color.WHITE);
+        integrity.setOpaque(true);
+        integrity.setText(text);
+        integrity.setVisible(true);
 
-			} catch (Exception e) {
-				integrity.setVisible(false);
-			}
-		} else {
-			integrity.setVisible(false);
-		}
-	}
+      } catch (Exception e) {
+        integrity.setVisible(false);
+      }
+    } else {
+      integrity.setVisible(false);
+    }
+  }
 
   private static class MyDialog extends JDialogOk {
     JInputComponent input;

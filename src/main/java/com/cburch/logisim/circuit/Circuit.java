@@ -995,18 +995,18 @@ public class Circuit {
   }
   
   public boolean hasValidIntegrity() {
-		for (Component c : comps) {
-			if (!c.hasValidIntegrity())
-				return false;
-		}
-		return true;
-	}
+        for (Component c : comps) {
+            if (!c.hasValidIntegrity())
+                return false;
+        }
+        return true;
+    }
 
-	public boolean hasValidOwner(Tracker tracker) {
-		for (Component c : comps) {
-			if (!c.hasValidOwner(tracker))
-				return false;
-		}
-		return true;
-	}
+    public boolean hasValidOwner(Tracker tracker) {
+        for (Component c : comps) {
+            if (!c.hasValidOwner(tracker))
+                return false;
+        }
+        return true;
+    }
 }

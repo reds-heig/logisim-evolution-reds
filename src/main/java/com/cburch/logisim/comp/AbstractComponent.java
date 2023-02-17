@@ -64,41 +64,41 @@ public abstract class AbstractComponent implements Component {
   public abstract void propagate(CircuitState state);
 
   @Override
-	public boolean hasValidIntegrity() {
-		/* Check integrity */
-		if (getAttributeSet().containsAttribute(StdAttr.INTEGRITY)) {
-			try {
-				return ((AbstractAttributeSet) getAttributeSet())
-						.hasValidIntegrity();
-			} catch (NoIntegrityAttributeException e) {
-				return true;
-			}
-		}
-		return true;
-	}
+  public boolean hasValidIntegrity() {
+    /* Check integrity */
+    if (getAttributeSet().containsAttribute(StdAttr.INTEGRITY)) {
+      try {
+        return ((AbstractAttributeSet) getAttributeSet())
+            .hasValidIntegrity();
+      } catch (NoIntegrityAttributeException e) {
+        return true;
+      }
+    }
+    return true;
+  }
 
-	@Override
-	public boolean hasValidOwner(Tracker tracker) {
-		if (!getAttributeSet().containsAttribute(StdAttr.OWNER))
-			return true;
+  @Override
+  public boolean hasValidOwner(Tracker tracker) {
+    if (!getAttributeSet().containsAttribute(StdAttr.OWNER))
+      return true;
 
-		return tracker.getSelectedAuthors().contains(
-				getAttributeSet().getValue(StdAttr.OWNER));
-	}
+    return tracker.getSelectedAuthors().contains(
+        getAttributeSet().getValue(StdAttr.OWNER));
+  }
 
     @Override
-	public TrackerTreeCircuitNode getTrackerExplorerCircuitNode(
-			TrackerTreeModel model, Circuit circuite, CircuitState state) {
-		return null;
-	}
+  public TrackerTreeCircuitNode getTrackerExplorerCircuitNode(
+      TrackerTreeModel model, Circuit circuite, CircuitState state) {
+    return null;
+  }
 
-	@Override
-	public TrackerTreeCompNode getTrackerExplorerCompNode(
-			TrackerTreeCircuitNode parent) {
+  @Override
+  public TrackerTreeCompNode getTrackerExplorerCompNode(
+      TrackerTreeCircuitNode parent) {
 
-		if (compNode == null)
-			compNode = new TrackerTreeCompNode(this, parent);
+    if (compNode == null)
+      compNode = new TrackerTreeCompNode(this, parent);
 
-		return compNode;
-	}
+    return compNode;
+  }
 }

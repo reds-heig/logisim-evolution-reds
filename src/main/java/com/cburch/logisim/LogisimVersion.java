@@ -186,11 +186,11 @@ public class LogisimVersion {
   }
 
   /**
-	 * If the considered Logisim version includes a tracker, returns true.
-	 * Assumption: the tracker is identified by a variant equals to "t"
-	 */
-	public boolean hasTracker() {
-		return (suffix.equals("t"));
-	}
+     * If the considered Logisim version includes a tracker, returns true.
+     * Assumption: the tracker is identified by a variant equals to "t"
+     */
+    public boolean hasTracker() {
+        return (suffix.equals("t"));
+    }
   
 }

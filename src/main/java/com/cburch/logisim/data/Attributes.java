@@ -143,32 +143,32 @@ public class Attributes {
 
   private static class DateAttribute extends Attribute<Date> {
 
-		public DateAttribute(String name, StringGetter disp) {
-			super(name, disp);
+    public DateAttribute(String name, StringGetter disp) {
+      super(name, disp);
 
-		}
+    }
 
-		@Override
-		public Date parse(String value) {
-			Date date = null;
-			try {
-				date = (Date) LocaleManager.PARSER_SDF.parse(value);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			return date;
-		}
+    @Override
+    public Date parse(String value) {
+      Date date = null;
+      try {
+        date = (Date) LocaleManager.PARSER_SDF.parse(value);
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+      return date;
+    }
 
-		@Override
-		public String toDisplayString(Date date) {
-			return toStandardString(date);
-		}
+    @Override
+    public String toDisplayString(Date date) {
+      return toStandardString(date);
+    }
 
-		@Override
-		public String toStandardString(Date date) {
-			return LocaleManager.PARSER_SDF.format(date);
-		}
-	}
+    @Override
+    public String toStandardString(Date date) {
+      return LocaleManager.PARSER_SDF.format(date);
+    }
+  }
 
   private static class DirectionAttribute extends OptionAttribute<Direction> {
     private static final Direction[] vals = {
@@ -520,9 +520,9 @@ public class Attributes {
     return new ColorAttribute(name, disp);
   }
 
-	public static Attribute<Date> forDate(String name, StringGetter disp) {
-		return new DateAttribute(name, disp);
-	}
+  public static Attribute<Date> forDate(String name, StringGetter disp) {
+    return new DateAttribute(name, disp);
+  }
 
   public static Attribute<ComponentMapInformationContainer> forMap() {
     return new IOMapAttribute();

@@ -435,7 +435,7 @@ class XmlReader {
       }
 
       if (versionString.contains("t"))
-				file.setTrackedVersion(true);
+                file.setTrackedVersion(true);
 
       // If we are opening a pre-logisim-evolution file, there might be
       // some components
@@ -458,53 +458,53 @@ class XmlReader {
       }
         
       /* Get integrity hash and remove from file */
-			String storedIntegrity = elt.getAttribute("integrity");
-			elt.removeAttribute("integrity");
+            String storedIntegrity = elt.getAttribute("integrity");
+            elt.removeAttribute("integrity");
 
-			String realIntegrity = null;
+            String realIntegrity = null;
 
-			/* Get file data hash */
-			try {
-				TransformerFactory transFactory = TransformerFactory
-						.newInstance();
-				Transformer transformer = transFactory.newTransformer();
-				StringWriter buffer = new StringWriter();
-				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-						"yes");
-				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-				transformer.setOutputProperty(OutputKeys.METHOD,
-						"xml");
+            /* Get file data hash */
+            try {
+                TransformerFactory transFactory = TransformerFactory
+                        .newInstance();
+                Transformer transformer = transFactory.newTransformer();
+                StringWriter buffer = new StringWriter();
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+                        "yes");
+                transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+                transformer.setOutputProperty(OutputKeys.METHOD,
+                        "xml");
 
-				transformer.transform(new DOMSource(elt), new StreamResult(
-						buffer));
+                transformer.transform(new DOMSource(elt), new StreamResult(
+                        buffer));
 
-				realIntegrity = Integrity.getHashOf(buffer.toString());
+                realIntegrity = Integrity.getHashOf(buffer.toString());
 
-			} catch (TransformerException e) {
-				e.printStackTrace();
-			}
+            } catch (TransformerException e) {
+                e.printStackTrace();
+            }
 
       // System.out.println("REAL: " + realIntegrity + ", STORED: " + storedIntegrity);
-			/* Check integrity (compare hash), if wrong */
-			if (file.isTrackedVersion()
-					&& !storedIntegrity.equalsIgnoreCase(realIntegrity)) {
+            /* Check integrity (compare hash), if wrong */
+            if (file.isTrackedVersion()
+                    && !storedIntegrity.equalsIgnoreCase(realIntegrity)) {
 
-				/*
-				 * Version 2.11.2.t is always tolerated, cause there is a bug in
-				 * the hash generation on windows
-				 */
-				if (versionString.equals("2.11.2.t")) {
-					this.file.setCorrupt(false);
-				} else {
-					addError(S.get("fileIntegrityCheckError"),
-							"XmlReader");
-					this.file.setCorrupt(true); // Default is already true
-				}
-			}
-			/* Integrity OK */
-			else {
-				this.file.setCorrupt(false);
-			}
+                /*
+                 * Version 2.11.2.t is always tolerated, cause there is a bug in
+                 * the hash generation on windows
+                 */
+                if (versionString.equals("2.11.2.t")) {
+                    this.file.setCorrupt(false);
+                } else {
+                    addError(S.get("fileIntegrityCheckError"),
+                            "XmlReader");
+                    this.file.setCorrupt(true); // Default is already true
+                }
+            }
+            /* Integrity OK */
+            else {
+                this.file.setCorrupt(false);
+            }
 
 
       // first, load the sublibraries

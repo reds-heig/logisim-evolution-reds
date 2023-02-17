@@ -493,21 +493,21 @@ final class XmlWriter {
     /* Get the first project Element */
     var p = (Element) doc.getElementsByTagName("project").item(0);
     try {
-			TransformerFactory transFactory = TransformerFactory.newInstance();
-			Transformer transformer = transFactory.newTransformer();
-			StringWriter buffer = new StringWriter();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-					"yes");
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.transform(new DOMSource(p), new StreamResult(buffer));
+            TransformerFactory transFactory = TransformerFactory.newInstance();
+            Transformer transformer = transFactory.newTransformer();
+            StringWriter buffer = new StringWriter();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+                    "yes");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.transform(new DOMSource(p), new StreamResult(buffer));
 
-			p.setAttribute("integrity",
-					Integrity.getHashOf(buffer.toString()));
+            p.setAttribute("integrity",
+                    Integrity.getHashOf(buffer.toString()));
 
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
   }
 
   Element fromMouseMappings() {

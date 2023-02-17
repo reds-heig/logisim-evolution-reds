@@ -21,8 +21,8 @@ import java.util.Date;
 public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   private ArrayList<AttributeListener> listeners = null;
 
-	private boolean integrityIsValid = false;
-	private boolean toInit = true;
+    private boolean integrityIsValid = false;
+    private boolean toInit = true;
 
   @Override
   public void addAttributeListener(AttributeListener l) {
@@ -105,38 +105,38 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 
   @Override
   public void setToInit(boolean value) {
-		toInit = value;
-	}
+        toInit = value;
+    }
 
   @Override
   public boolean isToInit() {
-		return toInit;
-	}
+        return toInit;
+    }
 
   public boolean hasValidIntegrity() throws NoIntegrityAttributeException {
 
-		if (containsAttribute(StdAttr.INTEGRITY)) {
-			String integrityCheck = this.getValue(StdAttr.INTEGRITY);
+        if (containsAttribute(StdAttr.INTEGRITY)) {
+            String integrityCheck = this.getValue(StdAttr.INTEGRITY);
 
-			String date;
-			if (this.getValue(StdAttr.DATE) != null)
-				date = LocaleManager.PARSER_SDF.format(this
-						.getValue(StdAttr.DATE));
-			else
-				date = "";
+            String date;
+            if (this.getValue(StdAttr.DATE) != null)
+                date = LocaleManager.PARSER_SDF.format(this
+                        .getValue(StdAttr.DATE));
+            else
+                date = "";
 
-			String integrityHash = Integrity.getHashOf(this
-					.getValue(StdAttr.OWNER)
-					+ date
-					+ this.getValue(StdAttr.VERSION)
-					+ this.getValue(StdAttr.UUID));
+            String integrityHash = Integrity.getHashOf(this
+                    .getValue(StdAttr.OWNER)
+                    + date
+                    + this.getValue(StdAttr.VERSION)
+                    + this.getValue(StdAttr.UUID));
 
-			integrityIsValid = integrityCheck.equals(integrityHash);
-			return integrityIsValid;
+            integrityIsValid = integrityCheck.equals(integrityHash);
+            return integrityIsValid;
 
-		} else {
-			throw new NoIntegrityAttributeException(
-					"Element has no integrity attribute");
-		}
-	}
+        } else {
+            throw new NoIntegrityAttributeException(
+                    "Element has no integrity attribute");
+        }
+    }
 }

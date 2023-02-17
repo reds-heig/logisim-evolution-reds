@@ -189,49 +189,49 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   /**
-	 * Set the default values for the AttributeSet. This is mainly used to
-	 * initialize the tracker attributes.
-	 * 
-	 * @param attrs
-	 */
-	public static void setDefaultAttributes(AttributeSet attrs) {
+   * Set the default values for the AttributeSet. This is mainly used to
+   * initialize the tracker attributes.
+   * 
+   * @param attrs
+   */
+  public static void setDefaultAttributes(AttributeSet attrs) {
 
-		if (attrs.containsAttribute(StdAttr.INTEGRITY)) {
+    if (attrs.containsAttribute(StdAttr.INTEGRITY)) {
 
-			attrs.setReadOnly(StdAttr.OWNER, false);
-			attrs.setReadOnly(StdAttr.DATE, false);
-			attrs.setReadOnly(StdAttr.VERSION, false);
-			attrs.setReadOnly(StdAttr.UUID, false);
-			attrs.setReadOnly(StdAttr.INTEGRITY, false);
+      attrs.setReadOnly(StdAttr.OWNER, false);
+      attrs.setReadOnly(StdAttr.DATE, false);
+      attrs.setReadOnly(StdAttr.VERSION, false);
+      attrs.setReadOnly(StdAttr.UUID, false);
+      attrs.setReadOnly(StdAttr.INTEGRITY, false);
 
-			/* Define fixed read only attributes at component instantiation */
-			UUID uuid = UUID.randomUUID();
-			Date date = new Date();
+      /* Define fixed read only attributes at component instantiation */
+      UUID uuid = UUID.randomUUID();
+      Date date = new Date();
 
-			attrs.setValue(StdAttr.OWNER, UserManager.getUser().getName());
-			attrs.setValue(StdAttr.DATE, date);
-			attrs.setValue(StdAttr.VERSION, BuildInfo.version.toString());
-			attrs.setValue(StdAttr.UUID, uuid.toString());
+      attrs.setValue(StdAttr.OWNER, UserManager.getUser().getName());
+      attrs.setValue(StdAttr.DATE, date);
+      attrs.setValue(StdAttr.VERSION, BuildInfo.version.toString());
+      attrs.setValue(StdAttr.UUID, uuid.toString());
 
-			/*
-			 * Here we add an integrity code to check if someone changed the
-			 * component attributes. This way, if changes has been made to the
-			 * source file, we can more easily find where the changes were done
-			 */
-			attrs.setValue(StdAttr.INTEGRITY, Integrity.getHashOf(attrs
-					.getValue(StdAttr.OWNER)
-					+ LocaleManager.PARSER_SDF.format(attrs
-							.getValue(StdAttr.DATE))
-					+ attrs.getValue(StdAttr.VERSION).toString()
-					+ attrs.getValue(StdAttr.UUID).toString()));
+      /*
+       * Here we add an integrity code to check if someone changed the
+       * component attributes. This way, if changes has been made to the
+       * source file, we can more easily find where the changes were done
+       */
+      attrs.setValue(StdAttr.INTEGRITY, Integrity.getHashOf(attrs
+          .getValue(StdAttr.OWNER)
+          + LocaleManager.PARSER_SDF.format(attrs
+              .getValue(StdAttr.DATE))
+          + attrs.getValue(StdAttr.VERSION).toString()
+          + attrs.getValue(StdAttr.UUID).toString()));
 
-			attrs.setReadOnly(StdAttr.OWNER, true);
-			attrs.setReadOnly(StdAttr.DATE, true);
-			attrs.setReadOnly(StdAttr.VERSION, true);
-			attrs.setReadOnly(StdAttr.UUID, true);
-			attrs.setReadOnly(StdAttr.INTEGRITY, true);
+      attrs.setReadOnly(StdAttr.OWNER, true);
+      attrs.setReadOnly(StdAttr.DATE, true);
+      attrs.setReadOnly(StdAttr.VERSION, true);
+      attrs.setReadOnly(StdAttr.UUID, true);
+      attrs.setReadOnly(StdAttr.INTEGRITY, true);
 
-			attrs.setToInit(false);
-		}
-	}
+      attrs.setToInit(false);
+    }
+  }
 }

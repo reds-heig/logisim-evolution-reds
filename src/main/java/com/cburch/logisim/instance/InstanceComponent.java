@@ -68,7 +68,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   private boolean doMarkInstance;
   private boolean doMarkLabel;
 
-	private TrackerTreeNode compNode = null;
+  private TrackerTreeNode compNode = null;
 
   public InstanceComponent(InstanceFactory factory, Location loc, AttributeSet attrs) {
     this.listeners = null;
@@ -474,48 +474,48 @@ public final class InstanceComponent implements Component, AttributeListener, To
   }
 
   @Override
-	public TrackerTreeCircuitNode getTrackerExplorerCircuitNode(
-			TrackerTreeModel model, Circuit circuit, CircuitState circuitState) {
+  public TrackerTreeCircuitNode getTrackerExplorerCircuitNode(
+      TrackerTreeModel model, Circuit circuit, CircuitState circuitState) {
 
-		if (compNode == null) {
-			compNode = new TrackerTreeCircuitNode(model, circuit, circuitState,
-					this);
-		}
+    if (compNode == null) {
+      compNode = new TrackerTreeCircuitNode(model, circuit, circuitState,
+          this);
+    }
 
-		return (TrackerTreeCircuitNode) compNode;
-	}
-
-	@Override
-	public TrackerTreeCompNode getTrackerExplorerCompNode(
-			TrackerTreeCircuitNode parent) {
-
-		if (compNode == null) {
-			compNode = new TrackerTreeCompNode(this, parent);
-		}
-
-		return (TrackerTreeCompNode) compNode;
-	}
+    return (TrackerTreeCircuitNode) compNode;
+  }
 
   @Override
-	public boolean hasValidIntegrity() {
-		/* Check integrity */
-		if (getAttributeSet().containsAttribute(StdAttr.INTEGRITY)) {
-			try {
-				return ((AbstractAttributeSet) getAttributeSet())
-						.hasValidIntegrity();
-			} catch (NoIntegrityAttributeException e) {
-				return true;
-			}
-		}
-		return true;
-	}
+  public TrackerTreeCompNode getTrackerExplorerCompNode(
+      TrackerTreeCircuitNode parent) {
 
-	@Override
-	public boolean hasValidOwner(Tracker tracker) {
-		if (!getAttributeSet().containsAttribute(StdAttr.OWNER))
-			return true;
+    if (compNode == null) {
+      compNode = new TrackerTreeCompNode(this, parent);
+    }
 
-		return tracker.getSelectedAuthors().contains(
-				getAttributeSet().getValue(StdAttr.OWNER));
-	}
+    return (TrackerTreeCompNode) compNode;
+  }
+
+  @Override
+  public boolean hasValidIntegrity() {
+    /* Check integrity */
+    if (getAttributeSet().containsAttribute(StdAttr.INTEGRITY)) {
+      try {
+        return ((AbstractAttributeSet) getAttributeSet())
+            .hasValidIntegrity();
+      } catch (NoIntegrityAttributeException e) {
+        return true;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public boolean hasValidOwner(Tracker tracker) {
+    if (!getAttributeSet().containsAttribute(StdAttr.OWNER))
+      return true;
+
+    return tracker.getSelectedAuthors().contains(
+        getAttributeSet().getValue(StdAttr.OWNER));
+  }
 }
