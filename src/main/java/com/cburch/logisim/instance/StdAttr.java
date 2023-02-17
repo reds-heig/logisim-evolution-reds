@@ -19,6 +19,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Date;
 
 public interface StdAttr {
   Attribute<Direction> FACING = Attributes.forDirection("facing", S.getter("stdFacingAttr"));
@@ -84,4 +85,25 @@ public interface StdAttr {
           new AttributeOption[] {SELECT_BOTTOM_LEFT, SELECT_TOP_RIGHT});
 
   Attribute<String> DUMMY = Attributes.forHidden();
+
+
+  Attribute<String> OWNER = Attributes.forString(
+    "owner",
+    S.getter("stdOwnerAttr"));
+  
+  Attribute<Date> DATE = Attributes.forDate(
+    "date",
+    S.getter("stdDateAttr"));
+  
+  Attribute<String> VERSION = Attributes.forString(
+    "version",
+    S.getter("stdVersionAttr"));
+
+  Attribute<String> UUID = Attributes.forString(
+    "uuid",
+    S.getter("stdUUIDAttr"));
+  
+  Attribute<String> INTEGRITY = Attributes.forString(
+    "integrity",
+    S.getter("stdIntegrityAttr"));
 }

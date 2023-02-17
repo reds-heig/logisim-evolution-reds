@@ -23,6 +23,11 @@ class GateAttributeList extends AbstractList<Attribute<?>> {
     GateAttributes.ATTR_OUTPUT,
     StdAttr.LABEL,
     StdAttr.LABEL_FONT,
+    StdAttr.OWNER,
+    StdAttr.DATE,
+	StdAttr.VERSION,
+    StdAttr.UUID,
+    StdAttr.INTEGRITY,
   };
 
   private final GateAttributes attrs;

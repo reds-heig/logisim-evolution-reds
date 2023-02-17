@@ -46,6 +46,8 @@ public class SplitterFactory extends AbstractComponentFactory {
 
   @Override
   public Component createComponent(Location loc, AttributeSet attrs) {
+    if (attrs.isToInit())
+        setDefaultAttributes(attrs);
     return new Splitter(loc, attrs);
   }
 

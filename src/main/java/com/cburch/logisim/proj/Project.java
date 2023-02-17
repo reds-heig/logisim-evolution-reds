@@ -15,6 +15,7 @@ import com.cburch.logisim.circuit.CircuitLocker;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.circuit.SubcircuitFactory;
+import com.cburch.logisim.circuit.Tracker;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
@@ -84,7 +85,7 @@ public class Project {
 
   private final Simulator simulator = new Simulator();
   private VhdlSimulatorTop vhdlSimulator = null;
-
+  private Tracker tracker = new Tracker();
   private LogisimFile file;
   private HdlModel hdlModel;
   private CircuitState circuitState; // active sim state
@@ -366,6 +367,10 @@ public class Project {
     return tool;
   }
 
+  public Tracker getTracker() {
+    return tracker;
+  }
+
   public VhdlSimulatorTop getVhdlSimulator() {
     if (vhdlSimulator == null) vhdlSimulator = new VhdlSimulatorTop(this);
 
@@ -475,6 +480,7 @@ public class Project {
       recentRootState.put(newCircuit, circuitState);
     }
     simulator.setCircuitState(circuitState);
+    tracker.setCircuitState(circuitState);
     if (circuitChanged) {
       fireEvent(ProjectEvent.ACTION_SET_CURRENT, oldActive, newCircuit);
       if (newCircuit != null) {

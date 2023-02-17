@@ -9,11 +9,23 @@
 
 package com.cburch.logisim.comp;
 
+
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.Tracker;
+import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.NoIntegrityAttributeException;
+import com.cburch.logisim.gui.main.TrackerTreeCircuitNode;
+import com.cburch.logisim.gui.main.TrackerTreeCompNode;
+import com.cburch.logisim.gui.main.TrackerTreeModel;
+import com.cburch.logisim.instance.StdAttr;
 import java.awt.Graphics;
 
 public abstract class AbstractComponent implements Component {
+  private TrackerTreeCompNode compNode = null;
+  
   protected AbstractComponent() {}
 
   @Override
@@ -47,4 +59,46 @@ public abstract class AbstractComponent implements Component {
   public EndData getEnd(int index) {
     return getEnds().get(index);
   }
+
+
+  public abstract void propagate(CircuitState state);
+
+  @Override
+	public boolean hasValidIntegrity() {
+		/* Check integrity */
+		if (getAttributeSet().containsAttribute(StdAttr.INTEGRITY)) {
+			try {
+				return ((AbstractAttributeSet) getAttributeSet())
+						.hasValidIntegrity();
+			} catch (NoIntegrityAttributeException e) {
+				return true;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean hasValidOwner(Tracker tracker) {
+		if (!getAttributeSet().containsAttribute(StdAttr.OWNER))
+			return true;
+
+		return tracker.getSelectedAuthors().contains(
+				getAttributeSet().getValue(StdAttr.OWNER));
+	}
+
+    @Override
+	public TrackerTreeCircuitNode getTrackerExplorerCircuitNode(
+			TrackerTreeModel model, Circuit circuite, CircuitState state) {
+		return null;
+	}
+
+	@Override
+	public TrackerTreeCompNode getTrackerExplorerCompNode(
+			TrackerTreeCircuitNode parent) {
+
+		if (compNode == null)
+			compNode = new TrackerTreeCompNode(this, parent);
+
+		return compNode;
+	}
 }

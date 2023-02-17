@@ -24,6 +24,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
+import com.cburch.logisim.tools.Integrity;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
@@ -34,6 +35,7 @@ import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -47,6 +49,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -104,6 +108,7 @@ final class XmlWriter {
   }
 
   static String attrsToString(NamedNodeMap a) {
+    // if (a == null) return "";
     final var n = a.getLength();
     if (n == 0) return "";
     else if (n == 1) return attrToString((Attr) a.item(0));
@@ -134,6 +139,9 @@ final class XmlWriter {
     final var children = top.getChildNodes();
     final var childrenCount = children.getLength();
     final var name = top.getNodeName();
+    System.out.println("Name = " + name);
+    System.out.println("CHILDREN COUNT = " + childrenCount);
+
     // project (contains ordered elements, do not sort)
     // - main
     // - toolbar (contains ordered elements, do not sort)
@@ -164,7 +172,15 @@ final class XmlWriter {
     }
     if (childrenCount > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
       final var nodeSet = new Node[childrenCount];
-      for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++) nodeSet[nodeIndex] = children.item(nodeIndex);
+      int realCount = 0;
+      for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++) {
+        // if (children.item(nodeIndex).getNodeType() == Node.ELEMENT_NODE) {
+          nodeSet[nodeIndex] = children.item(nodeIndex);
+          System.out.println("NODE NAME " + nodeSet[nodeIndex].getNodeName());
+          // realCount++;
+        // }
+      }
+      // nodeSet.()
       Arrays.sort(nodeSet, nodeComparator);
       for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++) top.insertBefore(nodeSet[nodeIndex], null);
     }
@@ -210,6 +226,10 @@ final class XmlWriter {
 
     doc.normalize();
     sort(doc);
+    /* We compute and add the integrity AFTER the sort, 
+    so the XmlReader work on the same sorted base */
+    addIntergrity(doc);
+
     Source src = new DOMSource(doc);
     Result dest = new StreamResult(out);
     tf.transform(src, dest);
@@ -465,7 +485,29 @@ final class XmlWriter {
     for (final var vhdl : file.getVhdlContents()) {
       ret.appendChild(fromVhdl(vhdl));
     }
+
     return ret;
+  }
+
+  static void addIntergrity(Document doc) {
+    /* Get the first project Element */
+    var p = (Element) doc.getElementsByTagName("project").item(0);
+    try {
+			TransformerFactory transFactory = TransformerFactory.newInstance();
+			Transformer transformer = transFactory.newTransformer();
+			StringWriter buffer = new StringWriter();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+					"yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.transform(new DOMSource(p), new StreamResult(buffer));
+
+			p.setAttribute("integrity",
+					Integrity.getHashOf(buffer.toString()));
+
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		}
   }
 
   Element fromMouseMappings() {

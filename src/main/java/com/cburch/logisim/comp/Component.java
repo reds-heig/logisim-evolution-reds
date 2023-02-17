@@ -10,10 +10,16 @@
 package com.cburch.logisim.comp;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.Tracker;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.main.TrackerTreeCircuitNode;
+import com.cburch.logisim.gui.main.TrackerTreeCompNode;
+import com.cburch.logisim.gui.main.TrackerTreeModel;
 import java.awt.Graphics;
+import java.util.Date;
 import java.util.List;
 
 public interface Component extends Location.At {
@@ -79,4 +85,12 @@ public interface Component extends Location.At {
   default void removeComponentListener(ComponentListener l) {
     // no-op implementation
   }
+
+	TrackerTreeCircuitNode getTrackerExplorerCircuitNode(TrackerTreeModel model, Circuit circuit, CircuitState state);
+
+	TrackerTreeCompNode getTrackerExplorerCompNode(TrackerTreeCircuitNode parent);
+
+	boolean hasValidIntegrity();
+
+	boolean hasValidOwner(Tracker tracker);
 }

@@ -21,6 +21,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.file.XmlWriter;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.generated.BuildInfo;
@@ -38,6 +39,7 @@ import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.std.wiring.PullResistor;
 import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.tools.EditTool;
+import com.cburch.logisim.tools.Integrity;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.MenuTool;
 import com.cburch.logisim.tools.PokeTool;
@@ -47,15 +49,19 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.UserManager;
 import com.cburch.logisim.util.XmlUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -64,6 +70,12 @@ import java.util.UUID;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -147,6 +159,33 @@ class XmlReader {
       }
 
       if (attrs == null) return;
+
+      attrs.setToInit(false);
+
+        /* If file was not tracked */
+        if (!file.isTrackedVersion()) {
+            UUID uuid = UUID.randomUUID();
+
+            String now = LocaleManager.PARSER_SDF.format(new Date());
+
+            attrsDefined.put("date", now);
+        /*
+                * Here we add an integrity code to check if someone changed the
+                * component attributes. This way, if changes has been made to
+                * the source file, we can more easily find where the changes
+                * were done
+                */
+            attrsDefined.put(
+                    "integrity",
+                    Integrity.getHashOf(UserManager.AUTOGEN_PREFIX
+                            + UserManager.getUser().getName() + now
+                            + sourceVersion.toString() + uuid.toString()));
+
+            attrsDefined.put("owner", UserManager.AUTOGEN_PREFIX
+                    + UserManager.getUser().getName());
+            attrsDefined.put("uuid", uuid.toString());
+            attrsDefined.put("version", sourceVersion.toString());
+        }   
 
       LogisimVersion ver = sourceVersion;
       boolean setDefaults = defaults != null && !defaults.isAllDefaultValues(attrs, ver);
@@ -387,12 +426,16 @@ class XmlReader {
       final var versionString = elt.getAttribute("source");
       var isHolyCrossFile = false;
       var isEvolutionFile = true;
+
       if ("".equals(versionString)) {
         sourceVersion = BuildInfo.version;
       } else {
         sourceVersion = LogisimVersion.fromString(versionString);
         isHolyCrossFile = versionString.endsWith("-HC");
       }
+
+      if (versionString.contains("t"))
+				file.setTrackedVersion(true);
 
       // If we are opening a pre-logisim-evolution file, there might be
       // some components
@@ -413,6 +456,56 @@ class XmlReader {
             "Old file format -- compatibility mode",
             OptionPane.WARNING_MESSAGE);
       }
+        
+      /* Get integrity hash and remove from file */
+			String storedIntegrity = elt.getAttribute("integrity");
+			elt.removeAttribute("integrity");
+
+			String realIntegrity = null;
+
+			/* Get file data hash */
+			try {
+				TransformerFactory transFactory = TransformerFactory
+						.newInstance();
+				Transformer transformer = transFactory.newTransformer();
+				StringWriter buffer = new StringWriter();
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+						"yes");
+				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+				transformer.setOutputProperty(OutputKeys.METHOD,
+						"xml");
+
+				transformer.transform(new DOMSource(elt), new StreamResult(
+						buffer));
+
+				realIntegrity = Integrity.getHashOf(buffer.toString());
+
+			} catch (TransformerException e) {
+				e.printStackTrace();
+			}
+
+      // System.out.println("REAL: " + realIntegrity + ", STORED: " + storedIntegrity);
+			/* Check integrity (compare hash), if wrong */
+			if (file.isTrackedVersion()
+					&& !storedIntegrity.equalsIgnoreCase(realIntegrity)) {
+
+				/*
+				 * Version 2.11.2.t is always tolerated, cause there is a bug in
+				 * the hash generation on windows
+				 */
+				if (versionString.equals("2.11.2.t")) {
+					this.file.setCorrupt(false);
+				} else {
+					addError(S.get("fileIntegrityCheckError"),
+							"XmlReader");
+					this.file.setCorrupt(true); // Default is already true
+				}
+			}
+			/* Integrity OK */
+			else {
+				this.file.setCorrupt(false);
+			}
+
 
       // first, load the sublibraries
       final var libsToAddAfter = new HashSet<Library>();
@@ -1052,6 +1145,7 @@ class XmlReader {
 
   LogisimFile readLibrary(InputStream is, Project proj) throws IOException, SAXException {
     final var doc = loadXmlFrom(is);
+
     var elt = doc.getDocumentElement();
     elt = ensureLogisimCompatibility(elt);
 

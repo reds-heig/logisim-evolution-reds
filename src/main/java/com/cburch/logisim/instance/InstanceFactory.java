@@ -143,6 +143,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   @Override
   public Component createComponent(Location loc, AttributeSet attrs) {
     final var ret = new InstanceComponent(this, loc, attrs);
+    if (attrs.isToInit())
+        setDefaultAttributes(attrs);
     configureNewInstance(ret.getInstance());
     return ret;
   }
@@ -169,6 +171,38 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
       super.drawGhost(context, color, x, y, attrs);
     }
   }
+
+  private void addDefautlAttributes() {
+		/*
+		 * Set the component default attributes Default attributes are added
+		 * here as the component don't inherit from a parent class TODO: put
+		 * default attributes into array and define it in a better place
+		 */
+		Attribute<?>[] newAttrs = new Attribute<?>[attrs.length + 5];
+		Object[] newDefaults = new Object[defaults.length + 5];
+		int i;
+		for (i = 0; i < attrs.length; ++i) {
+			newAttrs[i] = attrs[i];
+			newDefaults[i] = defaults[i];
+		}
+		newAttrs[i] = StdAttr.OWNER;
+		newDefaults[i++] = "";
+
+		newAttrs[i] = StdAttr.DATE;
+		newDefaults[i++] = null;
+
+		newAttrs[i] = StdAttr.VERSION;
+		newDefaults[i++] = "";
+
+		newAttrs[i] = StdAttr.UUID;
+		newDefaults[i++] = "";
+
+		newAttrs[i] = StdAttr.INTEGRITY;
+		newDefaults[i++] = "";
+
+		attrs = newAttrs;
+		defaults = newDefaults;
+	}
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
@@ -317,6 +351,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   public void setAttributes(Attribute<?>[] attrs, Object[] defaults) {
     this.attrs = attrs;
     this.defaults = defaults;
+    
+    addDefautlAttributes();
   }
 
   public void setDefaultToolTip(StringGetter value) {

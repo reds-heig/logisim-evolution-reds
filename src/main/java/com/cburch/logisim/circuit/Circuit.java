@@ -54,6 +54,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -992,4 +993,20 @@ public class Circuit {
       if (proj != null) proj.setForcedDirty();
     }
   }
+  
+  public boolean hasValidIntegrity() {
+		for (Component c : comps) {
+			if (!c.hasValidIntegrity())
+				return false;
+		}
+		return true;
+	}
+
+	public boolean hasValidOwner(Tracker tracker) {
+		for (Component c : comps) {
+			if (!c.hasValidOwner(tracker))
+				return false;
+		}
+		return true;
+	}
 }

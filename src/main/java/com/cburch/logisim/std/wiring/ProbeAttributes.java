@@ -24,6 +24,7 @@ import com.cburch.logisim.prefs.ConvertEvent;
 import com.cburch.logisim.prefs.ConvertEventListener;
 import java.awt.Font;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class ProbeAttributes extends AbstractAttributeSet implements ConvertEventListener {
@@ -45,7 +46,11 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
-          PROBEAPPEARANCE);
+          PROBEAPPEARANCE,
+          StdAttr.OWNER, 
+          StdAttr.DATE,
+          StdAttr.VERSION,
+          StdAttr.UUID, StdAttr.INTEGRITY);
 
   public static AttributeOption getDefaultProbeAppearance() {
     if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) return APPEAR_EVOLUTION_NEW;
@@ -59,6 +64,13 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
   RadixOption radix = RadixOption.RADIX_2;
   BitWidth width = BitWidth.ONE;
   AttributeOption appearance = StdAttr.APPEAR_CLASSIC;
+
+  /* Integrity members */
+  String owner = "";
+	Date date = null;
+	String version = "";
+	String uuid = "";
+	String integrity = "";
 
   public ProbeAttributes() {}
 
@@ -81,6 +93,11 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
     if (attr == StdAttr.LABEL_FONT) return (E) labelfont;
     if (attr == RadixOption.ATTRIBUTE) return (E) radix;
     if (attr == PROBEAPPEARANCE) return (E) appearance;
+		if (attr == StdAttr.OWNER) return (E) owner;
+		if (attr == StdAttr.DATE)	return (E) date;
+		if (attr == StdAttr.VERSION) return (E) version;
+		if (attr == StdAttr.UUID) return (E) uuid;
+		if (attr == StdAttr.INTEGRITY) return (E) integrity;
     return null;
   }
 
@@ -112,7 +129,18 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
       AttributeOption NewAppearance = (AttributeOption) value;
       if (appearance.equals(NewAppearance)) return;
       appearance = NewAppearance;
-    } else {
+    } else if (attr == StdAttr.OWNER) {
+			owner = (String) value;
+		} else if (attr == StdAttr.DATE) {
+			date = (Date) value;
+		} else if (attr == StdAttr.VERSION) {
+			version = (String) value;
+		} else if (attr == StdAttr.UUID) {
+			uuid = (String) value;
+		} else if (attr == StdAttr.INTEGRITY) {
+			integrity = (String) value;
+			System.out.println(integrity);
+		} else {
       throw new IllegalArgumentException("unknown attribute");
     }
     fireAttributeValueChanged(attr, value, Oldvalue);
@@ -122,4 +150,34 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
   public void attributeValueChanged(ConvertEvent e) {
     setValue(PROBEAPPEARANCE, e.getValue());
   }
+
+  @Override
+	public boolean isReadOnly(Attribute<?> attr) {
+		/*
+		 * Here read only attributes are statically set. I know this is (really
+		 * really) ugly but if you want to make it better you have to import all
+		 * the node mechanism (like in AttributeSetImpl). In fact, the abstract
+		 * class should implement these features, so if you have a week off, you
+		 * know how to spend your time ;-)
+		 */
+
+
+		if (attr == StdAttr.OWNER || attr == StdAttr.DATE
+				|| attr == StdAttr.VERSION || attr == StdAttr.UUID
+				|| attr == StdAttr.INTEGRITY)
+			return true;
+		else
+			return false;
+
+	}
+
+	@Override
+	public void setReadOnly(Attribute<?> attr, boolean value) {
+		/*
+		 * Read only attribute is... read only, see note in isReadOnly here
+		 * above to know why We can't throw unsupported operation exception
+		 * (like in parent abstract class) because this method is called by the
+		 * factory
+		 */
+	}
 }

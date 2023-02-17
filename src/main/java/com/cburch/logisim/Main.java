@@ -21,6 +21,8 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
@@ -56,14 +58,17 @@ public class Main {
     if (startup == null) System.exit(10);
     if (startup.shallQuit()) System.exit(0);
 
-    try {
-      startup.run();
-    } catch (Throwable e) {
-      final var strWriter = new StringWriter();
-      final var printWriter = new PrintWriter(strWriter);
-      e.printStackTrace(printWriter);
-      OptionPane.showMessageDialog(null, strWriter.toString());
-      System.exit(100);
+    if (!startup.autoUpdate()) {
+      try {
+        startup.run();
+      } catch (Throwable e) {
+        Writer result = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(result);
+        e.printStackTrace(printWriter);
+        if (!startup.isTty)
+            JOptionPane.showMessageDialog(null, result.toString());
+        System.exit(-1);
+      }
     }
   }
 
@@ -75,4 +80,24 @@ public class Main {
   public static boolean hasGui() {
     return !headless;
   }
+
+  /* Added by REDS */
+  public static final int FINAL_REVISION = Integer.MAX_VALUE / 4;
+  public static final LogisimVersion VERSION = new LogisimVersion(3, 9, 0, "dev");
+	public static final String VERSION_NAME = VERSION.toString();
+	public static final int COPYRIGHT_YEAR = 2014;
+
+	public static boolean ANALYZE = true;
+	/**
+	 * This flag enables auto-updates. It is true by default, so that users
+	 * normally check for updates at startup. On the other hand, this might  be
+	 * annoying for developers, therefore we let them disable it from the
+	 * command line with the '-noupdates' option.
+	 */
+	public static boolean UPDATE = true;
+
+	/**
+	 * URL for the automatic updater
+	 */
+	public static final String UPDATE_URL = "http://reds-data.heig-vd.ch/logisim-evolution/logisim_evolution_version.xml";
 }

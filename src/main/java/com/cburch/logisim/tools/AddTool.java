@@ -15,6 +15,7 @@ import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitException;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.SubcircuitFactory;
+import com.cburch.logisim.comp.AbstractComponentFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -542,6 +543,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
                 attrsCopy.setValue(StdAttr.LABEL, matrix.getLabel());
               }
             }
+            ((AbstractComponentFactory) source).setDefaultAttributes(attrsCopy);
             final var comp = source.createComponent(loc, attrsCopy);
 
             if (circ.hasConflict(comp)) {

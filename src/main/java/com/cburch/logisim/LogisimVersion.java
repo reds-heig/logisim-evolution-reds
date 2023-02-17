@@ -9,6 +9,7 @@
 
 package com.cburch.logisim;
 
+import com.cburch.logisim.Main;
 import java.util.regex.Pattern;
 
 /**
@@ -29,6 +30,7 @@ public class LogisimVersion {
   private int patch = 0;
   private String separator = "";
   private String suffix = "";
+
 
   private LogisimVersion() {
     // private
@@ -67,6 +69,7 @@ public class LogisimVersion {
 
     var pattern = "^(\\d+.\\d+.\\d+)(.*)$";
     var m = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(versionString);
+
     if (m.matches()) {
       final var verStr = m.group(1);
       final var sufStr = m.group(2);
@@ -92,7 +95,7 @@ public class LogisimVersion {
           }
           suffix = sufStr;
         } else if (sufStr.length() > 1) {
-          pattern = "^(-)?([a-z][a-z\\d]*)$";
+          pattern = "^([-\\.])?([a-z][a-z\\d]*)$";
           m = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(sufStr);
           if (!m.matches()) {
             throw new IllegalArgumentException(
@@ -181,4 +184,13 @@ public class LogisimVersion {
     if (!suffix.equals("")) result += suffix;
     return result;
   }
+
+  /**
+	 * If the considered Logisim version includes a tracker, returns true.
+	 * Assumption: the tracker is identified by a variant equals to "t"
+	 */
+	public boolean hasTracker() {
+		return (suffix.equals("t"));
+	}
+  
 }

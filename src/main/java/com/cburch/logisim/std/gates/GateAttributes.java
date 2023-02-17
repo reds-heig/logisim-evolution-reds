@@ -19,6 +19,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
 import java.awt.Font;
+import java.util.Date;
 import java.util.List;
 
 public class GateAttributes extends AbstractAttributeSet {
@@ -65,6 +66,12 @@ public class GateAttributes extends AbstractAttributeSet {
   String label = "";
   Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
 
+  String owner = "";
+  Date date = null;
+  String version = "";
+  String uuid = "";
+  String integrity = "";
+
   GateAttributes(boolean isXor) {
     xorBehave = isXor ? XOR_ONE : null;
   }
@@ -86,6 +93,11 @@ public class GateAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.WIDTH) return (V) width;
     if (attr == StdAttr.LABEL) return (V) label;
     if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
+		if (attr == StdAttr.OWNER) return (V) owner;
+		if (attr == StdAttr.DATE) return (V) date;
+		if (attr == StdAttr.VERSION) return (V) version;
+		if (attr == StdAttr.UUID) return (V) uuid;
+		if (attr == StdAttr.INTEGRITY) return (V) integrity;
     if (attr == ATTR_SIZE) return (V) size;
     if (attr == ATTR_INPUTS) return (V) Integer.valueOf(inputs);
     if (attr == ATTR_OUTPUT) return (V) out;
@@ -124,7 +136,17 @@ public class GateAttributes extends AbstractAttributeSet {
       xorBehave = (AttributeOption) value;
     } else if (attr == ATTR_OUTPUT) {
       out = (AttributeOption) value;
-    } else if (attr instanceof NegateAttribute negAttr) {
+    } else if (attr == StdAttr.OWNER) {
+			owner = (String) value;
+		} else if (attr == StdAttr.DATE) {
+			date = (Date) value;
+		} else if (attr == StdAttr.VERSION) {
+			version = (String) value;
+		} else if (attr == StdAttr.UUID) {
+			uuid = (String) value;
+		} else if (attr == StdAttr.INTEGRITY) {
+			integrity = (String) value;
+		} else if (attr instanceof NegateAttribute negAttr) {
       final var index = negAttr.index;
       if ((Boolean) value) {
         negated |= 1 << index;
@@ -136,4 +158,33 @@ public class GateAttributes extends AbstractAttributeSet {
     }
     fireAttributeValueChanged(attr, value, attr == StdAttr.LABEL ? (V) oldvalue : null);
   }
+
+  @SuppressWarnings("unchecked")
+	@Override
+	public boolean isReadOnly(Attribute<?> attr) {
+
+		/*
+		 * Here read only attributes are statically set. I know this is (really
+		 * really) ugly but if you want to make it better you have to import all
+		 * the node mechanism (like in AttributeSetImpl). In fact, the abstract
+		 * class should implement these features, so if you have a week off, you
+		 * know how to spend your time ;-)
+		 */
+		if (attr == StdAttr.OWNER || attr == StdAttr.DATE
+				|| attr == StdAttr.VERSION || attr == StdAttr.UUID
+				|| attr == StdAttr.INTEGRITY)
+			return true;
+		else
+			return false;
+	}
+
+	@Override
+	public void setReadOnly(Attribute<?> attr, boolean value) {
+		/*
+		 * Read only attribute is... read only, see note in isReadOnly here
+		 * above to know why We can't throw unsupported operation exception
+		 * (like in parent abstract class) because this method is called by the
+		 * factory
+		 */
+	}
 }

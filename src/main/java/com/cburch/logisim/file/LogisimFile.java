@@ -79,6 +79,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   private Circuit main = null;
   private String name;
   private boolean isDirty = false;
+  private boolean isCorrupt = true;
+  private boolean isTrackedVersion = false;
 
   LogisimFile(Loader loader) {
     this.loader = loader;
@@ -507,10 +509,18 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     return null;
   }
 
-  @Override
-  public boolean isDirty() {
-    return isDirty;
-  }
+  public boolean isCorrupt() {
+		return isCorrupt;
+	}
+
+	@Override
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	public boolean isTrackedVersion() {
+		return isTrackedVersion;
+	}
 
   public void moveCircuit(AddTool tool, int index) {
     int oldIndex = tools.indexOf(tool);
@@ -587,6 +597,14 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     fireEvent(LibraryEvent.SET_NAME, name);
   }
 
+  public void setCorrupt(boolean corrupt) {
+		this.isCorrupt = corrupt;
+	}
+
+  public void setTrackedVersion(boolean tracked) {
+		isTrackedVersion = tracked;
+	}
+  
   //
   // other methods
   //

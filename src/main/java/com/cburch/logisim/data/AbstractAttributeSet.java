@@ -11,8 +11,18 @@ package com.cburch.logisim.data;
 
 import java.util.ArrayList;
 
+
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.Integrity;
+import com.cburch.logisim.util.LocaleManager;
+
+import java.util.Date;
+
 public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   private ArrayList<AttributeListener> listeners = null;
+
+	private boolean integrityIsValid = false;
+	private boolean toInit = true;
 
   @Override
   public void addAttributeListener(AttributeListener l) {
@@ -92,4 +102,41 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   public void setReadOnly(Attribute<?> attr, boolean value) {
     throw new UnsupportedOperationException();
   }
+
+  @Override
+  public void setToInit(boolean value) {
+		toInit = value;
+	}
+
+  @Override
+  public boolean isToInit() {
+		return toInit;
+	}
+
+  public boolean hasValidIntegrity() throws NoIntegrityAttributeException {
+
+		if (containsAttribute(StdAttr.INTEGRITY)) {
+			String integrityCheck = this.getValue(StdAttr.INTEGRITY);
+
+			String date;
+			if (this.getValue(StdAttr.DATE) != null)
+				date = LocaleManager.PARSER_SDF.format(this
+						.getValue(StdAttr.DATE));
+			else
+				date = "";
+
+			String integrityHash = Integrity.getHashOf(this
+					.getValue(StdAttr.OWNER)
+					+ date
+					+ this.getValue(StdAttr.VERSION)
+					+ this.getValue(StdAttr.UUID));
+
+			integrityIsValid = integrityCheck.equals(integrityHash);
+			return integrityIsValid;
+
+		} else {
+			throw new NoIntegrityAttributeException(
+					"Element has no integrity attribute");
+		}
+	}
 }

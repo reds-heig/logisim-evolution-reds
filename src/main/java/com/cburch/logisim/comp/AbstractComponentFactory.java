@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.comp;
 
+import com.cburch.logisim.Main;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
@@ -16,15 +17,22 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.Integrity;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.IconsUtil;
+import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.UserManager;
 import java.awt.Color;
 import javax.swing.Icon;
+import java.util.Date;
+import java.util.UUID;
 
 public abstract class AbstractComponentFactory implements ComponentFactory {
   private static final Icon toolIcon = IconsUtil.getIcon("subcirc.gif");
@@ -179,4 +187,51 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public String toString() {
     return getName();
   }
+
+  /**
+	 * Set the default values for the AttributeSet. This is mainly used to
+	 * initialize the tracker attributes.
+	 * 
+	 * @param attrs
+	 */
+	public static void setDefaultAttributes(AttributeSet attrs) {
+
+		if (attrs.containsAttribute(StdAttr.INTEGRITY)) {
+
+			attrs.setReadOnly(StdAttr.OWNER, false);
+			attrs.setReadOnly(StdAttr.DATE, false);
+			attrs.setReadOnly(StdAttr.VERSION, false);
+			attrs.setReadOnly(StdAttr.UUID, false);
+			attrs.setReadOnly(StdAttr.INTEGRITY, false);
+
+			/* Define fixed read only attributes at component instantiation */
+			UUID uuid = UUID.randomUUID();
+			Date date = new Date();
+
+			attrs.setValue(StdAttr.OWNER, UserManager.getUser().getName());
+			attrs.setValue(StdAttr.DATE, date);
+			attrs.setValue(StdAttr.VERSION, BuildInfo.version.toString());
+			attrs.setValue(StdAttr.UUID, uuid.toString());
+
+			/*
+			 * Here we add an integrity code to check if someone changed the
+			 * component attributes. This way, if changes has been made to the
+			 * source file, we can more easily find where the changes were done
+			 */
+			attrs.setValue(StdAttr.INTEGRITY, Integrity.getHashOf(attrs
+					.getValue(StdAttr.OWNER)
+					+ LocaleManager.PARSER_SDF.format(attrs
+							.getValue(StdAttr.DATE))
+					+ attrs.getValue(StdAttr.VERSION).toString()
+					+ attrs.getValue(StdAttr.UUID).toString()));
+
+			attrs.setReadOnly(StdAttr.OWNER, true);
+			attrs.setReadOnly(StdAttr.DATE, true);
+			attrs.setReadOnly(StdAttr.VERSION, true);
+			attrs.setReadOnly(StdAttr.UUID, true);
+			attrs.setReadOnly(StdAttr.INTEGRITY, true);
+
+			attrs.setToInit(false);
+		}
+	}
 }

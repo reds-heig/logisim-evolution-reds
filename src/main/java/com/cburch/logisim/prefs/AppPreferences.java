@@ -19,6 +19,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
+import com.cburch.logisim.util.UserManager;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import java.awt.Component;
 import java.awt.Container;
@@ -806,4 +807,12 @@ public class AppPreferences {
 
   public static final PrefMonitor<String> DIALOG_DIRECTORY =
       create(new PrefMonitorString("dialogDirectory", ""));
+
+
+  // User preferences
+  public static final PrefMonitor<String> USER_DEFAULT = create(new PrefMonitorString(
+    "user_default", UserManager.UNKNOWN_USER_NAME));
+
+  public static final PrefMonitor<String> USER_LIST = create(new PrefMonitorString(
+    "user_list", UserManager.UNKNOWN_USER_NAME));
 }

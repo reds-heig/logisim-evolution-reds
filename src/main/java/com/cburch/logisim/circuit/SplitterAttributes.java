@@ -21,6 +21,7 @@ import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -189,7 +190,8 @@ public class SplitterAttributes extends AbstractAttributeSet {
 
   public static final Attribute<Integer> ATTR_FANOUT = Attributes.forIntegerRange("fanout", S.getter("splitterFanOutAttr"), 1, 64);
 
-  private static final List<Attribute<?>> INIT_ATTRIBUTES = Arrays.asList(StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE, ATTR_SPACING);
+  private static final List<Attribute<?>> INIT_ATTRIBUTES = Arrays.asList(StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE, ATTR_SPACING, 
+                                                                      StdAttr.OWNER, StdAttr.DATE, StdAttr.VERSION, StdAttr.UUID, StdAttr.INTEGRITY);
 
   private static final String UNCHOSEN_VAL = "none";
   private ArrayList<Attribute<?>> attrs = new ArrayList<>(INIT_ATTRIBUTES);
@@ -202,6 +204,12 @@ public class SplitterAttributes extends AbstractAttributeSet {
 
   // other values will be between 1 and fanout
   BitOutOption[] options = null;
+
+  String owner = "";
+  Date date = null;
+  String version = "";
+  String uuid = "";
+  String integrity = "";
 
   SplitterAttributes() {
     configureOptions();
@@ -314,7 +322,17 @@ public class SplitterAttributes extends AbstractAttributeSet {
       return (V) appear;
     } else if (attr == ATTR_SPACING) {
       return (V) Integer.valueOf(spacing);
-    } else if (attr instanceof BitOutAttribute bitOut) {
+    } else if (attr == StdAttr.OWNER) {
+			return (V) owner;
+		} else if (attr == StdAttr.DATE) {
+			return (V) date;
+		} else if (attr == StdAttr.VERSION) {
+			return (V) version;
+		} else if (attr == StdAttr.UUID) {
+			return (V) uuid;
+		} else if (attr == StdAttr.INTEGRITY) {
+			return (V) integrity;
+		} else if (attr instanceof BitOutAttribute bitOut) {
       return (V) Integer.valueOf(bitEnd[bitOut.which]);
     } else {
       return null;
@@ -356,7 +374,17 @@ public class SplitterAttributes extends AbstractAttributeSet {
       if (appear.equals(appearance)) return;
       appear = appearance;
       parameters = null;
-    } else if (attr instanceof BitOutAttribute bitOutAttr) {
+    } else if (attr == StdAttr.OWNER) {
+			owner = (String) value;
+		} else if (attr == StdAttr.DATE) {
+			date = (Date) value;
+		} else if (attr == StdAttr.VERSION) {
+			version = (String) value;
+		} else if (attr == StdAttr.UUID) {
+			uuid = (String) value;
+		} else if (attr == StdAttr.INTEGRITY) {
+			integrity = (String) value;
+		} else if (attr instanceof BitOutAttribute bitOutAttr) {
       int val = (value instanceof Integer) ? (Integer) value : ((BitOutOption) value).value + 1;
       if (val >= 0 && val <= fanout) {
         if (bitEnd[bitOutAttr.which] == (byte) val) return;
@@ -383,4 +411,32 @@ public class SplitterAttributes extends AbstractAttributeSet {
     }
     return answer;
   }
+
+  @Override
+	public boolean isReadOnly(Attribute<?> attr) {
+
+		/*
+		 * Here read only attributes are statically set. I know this is (really
+		 * really) ugly but if you want to make it better you have to import all
+		 * the node mechanism (like in AttributeSetImpl). In fact, the abstract
+		 * class should implement these features, so if you have a week off, you
+		 * know how to spend your time ;-)
+		 */
+		if (attr == StdAttr.OWNER || attr == StdAttr.DATE
+				|| attr == StdAttr.VERSION || attr == StdAttr.UUID
+				|| attr == StdAttr.INTEGRITY)
+			return true;
+		else
+			return false;
+	}
+
+	@Override
+	public void setReadOnly(Attribute<?> attr, boolean value) {
+		/*
+		 * Read only attribute is... read only, see note in isReadOnly here
+		 * above to know why We can't throw unsupported operation exception
+		 * (like in parent abstract class) because this method is called by the
+		 * factory
+		 */
+	}
 }

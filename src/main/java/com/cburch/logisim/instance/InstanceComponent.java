@@ -11,7 +11,10 @@ package com.cburch.logisim.instance;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.Main;
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.Tracker;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentEvent;
@@ -19,6 +22,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.ComponentListener;
 import com.cburch.logisim.comp.ComponentUserEvent;
 import com.cburch.logisim.comp.EndData;
+import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
@@ -26,9 +30,14 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.NoIntegrityAttributeException;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.main.TrackerTreeCircuitNode;
+import com.cburch.logisim.gui.main.TrackerTreeCompNode;
+import com.cburch.logisim.gui.main.TrackerTreeModel;
+import com.cburch.logisim.gui.main.TrackerTreeNode;
 import com.cburch.logisim.tools.TextEditable;
 import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.util.EventSourceWeakSupport;
@@ -58,6 +67,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
   private InstanceStateImpl instanceState;
   private boolean doMarkInstance;
   private boolean doMarkLabel;
+
+	private TrackerTreeNode compNode = null;
 
   public InstanceComponent(InstanceFactory factory, Location loc, AttributeSet attrs) {
     this.listeners = null;
@@ -461,4 +472,50 @@ public final class InstanceComponent implements Component, AttributeListener, To
         + "}@"
         + super.toString();
   }
+
+  @Override
+	public TrackerTreeCircuitNode getTrackerExplorerCircuitNode(
+			TrackerTreeModel model, Circuit circuit, CircuitState circuitState) {
+
+		if (compNode == null) {
+			compNode = new TrackerTreeCircuitNode(model, circuit, circuitState,
+					this);
+		}
+
+		return (TrackerTreeCircuitNode) compNode;
+	}
+
+	@Override
+	public TrackerTreeCompNode getTrackerExplorerCompNode(
+			TrackerTreeCircuitNode parent) {
+
+		if (compNode == null) {
+			compNode = new TrackerTreeCompNode(this, parent);
+		}
+
+		return (TrackerTreeCompNode) compNode;
+	}
+
+  @Override
+	public boolean hasValidIntegrity() {
+		/* Check integrity */
+		if (getAttributeSet().containsAttribute(StdAttr.INTEGRITY)) {
+			try {
+				return ((AbstractAttributeSet) getAttributeSet())
+						.hasValidIntegrity();
+			} catch (NoIntegrityAttributeException e) {
+				return true;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean hasValidOwner(Tracker tracker) {
+		if (!getAttributeSet().containsAttribute(StdAttr.OWNER))
+			return true;
+
+		return tracker.getSelectedAuthors().contains(
+				getAttributeSet().getValue(StdAttr.OWNER));
+	}
 }

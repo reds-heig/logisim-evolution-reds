@@ -53,4 +53,13 @@ public interface AttributeSet {
   default <V> List<Attribute<?>> attributesMayAlsoBeChanged(Attribute<V> attr, V value) {
     return null;
   }
+    
+  default void setToInit(boolean value) {
+    // no-op implementation
+  }
+
+
+	default boolean isToInit() {
+    return false;
+  }
 }

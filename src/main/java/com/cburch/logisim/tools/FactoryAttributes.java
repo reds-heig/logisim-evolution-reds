@@ -136,6 +136,16 @@ public class FactoryAttributes implements AttributeSet, AttributeListener, Clone
   }
 
   @Override
+	public boolean isToInit() {
+		return getBase().isToInit();
+	}
+
+  @Override
+	public void setToInit(boolean value) {
+		getBase().setToInit(value);
+	}
+
+  @Override
   public void removeAttributeListener(AttributeListener l) {
     listeners.remove(l);
   }

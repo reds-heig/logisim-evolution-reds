@@ -22,6 +22,9 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.main.TrackerTreeCircuitNode;
+import com.cburch.logisim.gui.main.TrackerTreeCompNode;
+import com.cburch.logisim.gui.main.TrackerTreeModel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.tools.CustomHandles;
 import com.cburch.logisim.util.Cache;
@@ -365,4 +368,26 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   public Color getDrcHighlightColor() {
     return drcWireMarkColor;
   }
+
+  @Override
+  public boolean hasValidIntegrity() {
+      return true;
+  }
+
+  @Override
+  public boolean hasValidOwner(Tracker tracker) {
+      return true;
+  }
+
+  @Override
+	public TrackerTreeCircuitNode getTrackerExplorerCircuitNode(
+			TrackerTreeModel model, Circuit circuit, CircuitState state) {
+		return null;
+	}
+
+	@Override
+	public TrackerTreeCompNode getTrackerExplorerCompNode(
+			TrackerTreeCircuitNode parent) {
+		return null;
+	}
 }
